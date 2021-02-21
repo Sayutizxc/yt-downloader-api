@@ -1,0 +1,29 @@
+GET http://localhost:3000/yt?url=https://www.youtube.com/watch?v=8IK6eLTNV1k&q=1080
+
+###
+GET http://localhost:3000/yt?url=https://www.amazon.com/watch?v=8IK6eLTNV1k
+
+###
+GET http://localhost:3000/yt?url=https://www.youtube.com/watch?v=abcdefghi
+
+
+### 144
+GET http://localhost:3000/yt?url=https://www.youtube.com/watch?v=8IK6eLTNV1k&q=144
+
+### 240
+GET http://localhost:3000/yt?url=https://www.youtube.com/watch?v=8IK6eLTNV1k&q=240
+
+### 360
+GET http://localhost:3000/yt?url=https://www.youtube.com/watch?v=8IK6eLTNV1k&q=360
+
+### 480
+GET http://localhost:3000/yt?url=https://www.youtube.com/watch?v=8IK6eLTNV1k&q=480
+
+### 720
+GET http://localhost:3000/yt?url=https://www.youtube.com/watch?v=8IK6eLTNV1k&q=720
+
+### 1080
+GET http://localhost:3000/yt?url=https://www.youtube.com/watch?v=8IK6eLTNV1k&q=1080
+
+### 123
+GET http://localhost:3000/yt?url=https://www.zzz.com/watch?v=8IK6eLTNV1k&q=123
