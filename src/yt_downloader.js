@@ -6,13 +6,13 @@ module.exports = async function ytDownloader(reqUrl, videoQuality) {
   const q = ['144', '240', '360', '480', '720', '1080'];
   const url = `${reqUrl}`;
 
-  // RegExp untuk memvalidasi url
+  // Regex untuk memvalidasi url
   const regexUrl = /^((https?:\/\/)?(www.)?(youtu(be)?.(be|com))\/(watch\?v=)?)/;
 
-  // RegExp untuk mengambil nilai dari k__id
+  // Regex untuk mengambil nilai dari k__id
   const regexUniqId = /(?<=k__id.?=.?("|'))\w+/;
 
-  // RegExp untuk mengambil download url dari video
+  // Regex untuk mengambil download url dari video
   const regexDownloadUrl = /(?<=<a href=")[\w:\/\/\.\?\=]+/;
 
   // Menentukan kualitas video
@@ -38,6 +38,9 @@ module.exports = async function ytDownloader(reqUrl, videoQuality) {
 
     // Ambil thumbnail dari video
     youtube.thumb = $('.thumbnail.cover img').attr('src');
+
+    // Ambil size dari video
+    youtube.size = $(`td:contains("${videoQuality}")`).next().text() || '';
 
     // Cek apakah ada k__id atau tidak
     if (!regexUniqId.test(response.result))
