@@ -1,10 +1,10 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-module.exports = async function ytDownloader(reqUrl, videoQuality) {
+module.exports = async function ytDownloader(url, videoQuality) {
   const youtube = {};
-  const q = ['144', '240', '360', '480', '720', '1080'];
-  const url = `${reqUrl}`;
+  const qualityCheck = ['144', '240', '360', '480', '720', '1080'];
+  let quality;
 
   // Regex untuk memvalidasi url
   const regexUrl = /^((https?:\/\/)?(www.)?(youtu(be)?.(be|com))\/(watch\?v=)?)/;
@@ -15,13 +15,6 @@ module.exports = async function ytDownloader(reqUrl, videoQuality) {
   // Regex untuk mengambil download url dari video
   const regexDownloadUrl = /(?<=<a href=")[\w:\/\/\.\?\=]+/;
 
-  // Menentukan kualitas video
-  const quality = q.includes(videoQuality)
-    ? ['144', '240', '720'].includes(videoQuality)
-      ? `${videoQuality}p`
-      : videoQuality
-    : '360';
-
   // Cek apakah url sudah benar
   if (!regexUrl.test(url)) throw new Error('Invalid URL');
   const videoId = url.replace(regexUrl, '').trim();
@@ -31,7 +24,19 @@ module.exports = async function ytDownloader(reqUrl, videoQuality) {
       url: 'https://www.y2mate.com/mates/analyze/ajax',
       data: `url=https://www.youtube.com/watch?v=${videoId}&q_auto=1&ajax=1`,
     }).then((response) => response.data);
+
     const $ = cheerio.load(response.result);
+
+    // Menentukan kualitas video
+    if (qualityCheck.includes(videoQuality)) {
+      quality = $(`td:contains("${videoQuality}p (.mp4)")`)
+        .next()
+        .next()
+        .find('a')
+        .attr('data-fquality');
+    } else {
+      throw new Error(`Kualitas video tidak valid`);
+    }
 
     // Ambil title dari video
     youtube.title = $('.caption.text-left b').text().trim();
@@ -40,7 +45,11 @@ module.exports = async function ytDownloader(reqUrl, videoQuality) {
     youtube.thumb = $('.thumbnail.cover img').attr('src');
 
     // Ambil size dari video
-    youtube.size = $(`td:contains("${videoQuality}")`).next().text() || '';
+    youtube.size = $(`td:contains("${videoQuality}p (.mp4)")`)
+      .next()
+      .text()
+      .trim();
+    if (youtube.size === 'MB') youtube.size = '-';
 
     // Cek apakah ada k__id atau tidak
     if (!regexUniqId.test(response.result))
@@ -51,9 +60,16 @@ module.exports = async function ytDownloader(reqUrl, videoQuality) {
       url: 'https://www.y2mate.com/mates/convert',
       data: `type=youtube&_id=${uniqId}&v_id=${videoId}&ajax=1&token=&ftype=mp4&fquality=${quality}`,
     }).then((response) => response.data);
+
+    // Ambil download video url
     youtube.download_url = regexDownloadUrl.exec(result.result)[0];
+
     return youtube;
   } catch (error) {
-    throw new Error(`${error}`);
+    if (error.message === "Cannot read property '0' of null") {
+      throw new Error(`Kualitas yang diminta tidak tersedia`);
+    } else {
+      throw new Error(`${error}`);
+    }
   }
 };
