@@ -1,17 +1,21 @@
 const morgan = require('morgan');
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const ytDownloader = require('./yt_downloader');
 
+app.use(cors());
+app.options('*', cors()); // to restrict this to one website only, replace the * with your website url
 app.use(morgan('dev'));
 
 app.get('/', (req, res, next) => {
-  res.send('Hello World');
+  res.send('route: /yt?url=https://youtube.com/watch?v=VIDEOURL&q=QUALITY&format=mp4/mp3');
 });
 
 app.get('/yt', async (req, res, next) => {
   try {
-    const data = await ytDownloader(req.query.url, req.query.q);
+    const videoFormat = req.query.format;
+    const data = await ytDownloader(req.query.url, (req.query.q === undefined) ? '480' : req.query.q, videoFormat); // this is a very caveman brain solution to the mp3 format, sorry.
     res.json({
       status: res.statusCode,
       result: data,
