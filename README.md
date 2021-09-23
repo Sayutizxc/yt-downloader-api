@@ -14,7 +14,7 @@
 - Example (items in [] are optional - items in <> are required)
 ```http
   http://127.0.0.1:3000/yt<?url={video_url}>[&q={video_quality}]<&format=mp3/mp4>
-  http://127.0.0.1:3000/yt?url=https://www.youtube.com/watch?v=8IK6eLTNV1k&q=720
+  http://127.0.0.1:3000/yt?url=https://www.youtube.com/watch?v=8IK6eLTNV1k&q=720&format=mp4
 ```
 
 - Response
@@ -29,3 +29,7 @@
   }
 }
 ```
+## Contributors
+<a href="https://github.com/Sayutizxc/yt-downloader-api/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Sayutizxc/yt-downloader-api" />
+</a>
