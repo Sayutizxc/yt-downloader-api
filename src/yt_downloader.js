@@ -1,7 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-module.exports = async function ytDownloader(url, videoQuality) {
+module.exports = async function ytDownloader(url, videoQuality, videoFormat) {
   const youtube = {};
   const qualityCheck = ['144', '240', '360', '480', '720', '1080'];
   let quality;
@@ -29,7 +29,7 @@ module.exports = async function ytDownloader(url, videoQuality) {
 
     // Menentukan kualitas video
     if (qualityCheck.includes(videoQuality)) {
-      quality = $(`td:contains("${videoQuality}p (.mp4)")`)
+      quality = $(`td:contains("${videoQuality}p (.${videoFormat})")`)
         .next()
         .next()
         .find('a')
@@ -45,7 +45,7 @@ module.exports = async function ytDownloader(url, videoQuality) {
     youtube.thumb = $('.thumbnail.cover img').attr('src');
 
     // Ambil size dari video
-    youtube.size = $(`td:contains("${videoQuality}p (.mp4)")`)
+    youtube.size = $(`td:contains("${videoQuality}p (.${videoFormat})")`)
       .next()
       .text()
       .trim();
@@ -58,7 +58,7 @@ module.exports = async function ytDownloader(url, videoQuality) {
     const result = await axios({
       method: 'post',
       url: 'https://www.y2mate.com/mates/convert',
-      data: `type=youtube&_id=${uniqId}&v_id=${videoId}&ajax=1&token=&ftype=mp4&fquality=${quality}`,
+      data: `type=youtube&_id=${uniqId}&v_id=${videoId}&ajax=1&token=&ftype=${videoFormat}${(videoFormat === 'mp3') ? '' : `&fquality=${quality}`}`,
     }).then((response) => response.data);
 
     // Ambil download video url

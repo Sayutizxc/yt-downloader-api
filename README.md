@@ -11,9 +11,9 @@
 
 ```
 
-- Example
+- Example (items in [] are optional - items in <> are required)
 ```http
-  http://127.0.0.1:3000/yt?url={video_url}&q={video_quality}
+  http://127.0.0.1:3000/yt<?url={video_url}>[&q={video_quality}]<&format=mp3/mp4>
   http://127.0.0.1:3000/yt?url=https://www.youtube.com/watch?v=8IK6eLTNV1k&q=720
 ```
 
