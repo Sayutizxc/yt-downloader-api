@@ -1,19 +1,24 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-module.exports = async function ytDownloader(url, videoQuality, videoFormat) {
+module.exports = async function ytDownloader(
+  url,
+  videoQuality = 360,
+  videoFormat = 'mp4'
+) {
   const youtube = {};
   const qualityCheck = ['144', '240', '360', '480', '720', '1080'];
   let quality;
 
   // Regex untuk memvalidasi url
-  const regexUrl = /^((https?:\/\/)?(www.)?(youtu(be)?.(be|com))\/(watch\?v=)?)/;
+  const regexUrl =
+    /^((https?:\/\/)?(www.)?(youtu(be)?.(be|com))\/(watch\?v=)?)/;
 
   // Regex untuk mengambil nilai dari k__id
   const regexUniqId = /(?<=k__id.?=.?("|'))\w+/;
 
   // Regex untuk mengambil download url dari video
-  const regexDownloadUrl = /(?<=<a href=")[\w:\/\/\.\?\=]+/;
+  const regexDownloadUrl = /(?<=<a href=")[\w:\/\/\.\?\=\&\-\%\+]+/;
 
   // Cek apakah url sudah benar
   if (!regexUrl.test(url)) throw new Error('Invalid URL');
@@ -58,7 +63,9 @@ module.exports = async function ytDownloader(url, videoQuality, videoFormat) {
     const result = await axios({
       method: 'post',
       url: 'https://www.y2mate.com/mates/convert',
-      data: `type=youtube&_id=${uniqId}&v_id=${videoId}&ajax=1&token=&ftype=${videoFormat}${(videoFormat === 'mp3') ? '' : `&fquality=${quality}`}`,
+      data: `type=youtube&_id=${uniqId}&v_id=${videoId}&ajax=1&token=&ftype=${videoFormat}${
+        videoFormat === 'mp3' ? '' : `&fquality=${quality}`
+      }`,
     }).then((response) => response.data);
 
     // Ambil download video url
