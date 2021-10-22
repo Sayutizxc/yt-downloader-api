@@ -9,13 +9,15 @@ app.options('*', cors()); // to restrict this to one website only, replace the *
 app.use(morgan('dev'));
 
 app.get('/', (req, res, next) => {
-  res.send('route: /yt?url=https://youtube.com/watch?v=VIDEOURL&q=QUALITY&format=mp4/mp3');
+  res.send(
+    'route: /yt?url=https://youtube.com/watch?v=VIDEOURL&q=QUALITY&format=mp4/mp3'
+  );
 });
 
 app.get('/yt', async (req, res, next) => {
   try {
     const videoFormat = req.query.format;
-    const data = await ytDownloader(req.query.url, (req.query.q === undefined) ? '480' : req.query.q, videoFormat); // this is a very caveman brain solution to the mp3 format, sorry.
+    const data = await ytDownloader(req.query.url, req.query.q, videoFormat);
     res.json({
       status: res.statusCode,
       result: data,
@@ -41,6 +43,7 @@ app.use((error, req, res, next) => {
   });
 });
 
-app.listen(3000, () => {
-  console.log('[SERVER] BERJALAN PADA http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`[SERVER] BERJALAN PADA PORT :${PORT}`);
 });
